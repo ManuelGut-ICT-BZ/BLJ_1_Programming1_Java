@@ -22,8 +22,8 @@ public class Main {
     static int berechneQuersumme(int zahl) {
         int sum = 0;
         while (zahl != 0) {
-            sum = sum + (zahl % 10);
-            zahl = zahl / 10;
+            sum += (zahl % 10);
+            zahl /= 10;
         }
         return sum;
     }
