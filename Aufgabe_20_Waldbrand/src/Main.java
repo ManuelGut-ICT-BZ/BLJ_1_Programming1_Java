@@ -1,40 +1,32 @@
 import java.util.Random;
-import java.util.Scanner;
 
 import static java.lang.Thread.sleep;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
 
-    private static final int TIME_INTERVALL_IN_SECONDS = 2;
+    private static final int TIME_INTERVAL_IN_SECONDS = 2;
     private static final String TREE = "🌲";
     private static final String TREE_BURNING = "🔥";
     private static final String TREE_BURNT = "🔺";
     private static final String HUMUS = "🟫";
     private static final String STONE = "🪨";
-    private static final String[][] PLAYGROUND = new String[10][30]; // 10 30
+    private static final String[][] PLAYGROUND = new String[10][30];
     private static final int PROBABILITY_FIRE_PERCENT = 1;
-    private static final int PROBABILITY_NEW_TREE_PERCENT = 1;
+    private static final int PROBABILITY_NEW_TREE_PERCENT = 5;
     private static final Random RANDOM = new Random();
 
-
     public static void main(String[] args) throws InterruptedException {
-
         setUpPlayground();
         drawPlayground();
 
-
         while (true) {
-            sleep(TIME_INTERVALL_IN_SECONDS * 1000);
+            sleep(TIME_INTERVAL_IN_SECONDS * 1000);
             changePlayground();
             drawPlayground();
         }
     }
 
-
     private static void setUpPlayground() {
-
         for (int i = 0; i < PLAYGROUND.length; i++) {
             for (int j = 0; j < PLAYGROUND[i].length; j++) {
                 switch (RANDOM.nextInt(3)) {
@@ -54,53 +46,48 @@ public class Main {
             System.out.println();
         }
         System.out.println();
-        System.out.println("---------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------");
         System.out.println();
     }
 
     private static void changePlayground() {
+        // Erstelle eine Kopie des aktuellen Spielfelds
+        String[][] playgroundCopy = new String[PLAYGROUND.length][PLAYGROUND[0].length];
+        for (int i = 0; i < PLAYGROUND.length; i++) {
+            System.arraycopy(PLAYGROUND[i], 0, playgroundCopy[i], 0, PLAYGROUND[i].length);
+        }
+
         for (int i = 0; i < PLAYGROUND.length; i++) {
             for (int j = 0; j < PLAYGROUND[i].length; j++) {
-                // Reihenfolge der if-Statements ist wichtig, da sonst der Baum in einem Zeitintervall brennt, verbrennt und zu Humus wird
                 // verglühter Baum wird zu Humus
                 if (PLAYGROUND[i][j].equals(TREE_BURNT)) {
                     PLAYGROUND[i][j] = HUMUS;
-                    System.out.println("New Humus");
                 }
                 // verglühender Baum
-                if (PLAYGROUND[i][j].equals(TREE_BURNING)) {
+                else if (PLAYGROUND[i][j].equals(TREE_BURNING)) {
                     PLAYGROUND[i][j] = TREE_BURNT;
-                    System.out.println("Burnt Tree");
                 }
-
                 // spontaner neuer Baum
-                if (PLAYGROUND[i][j].equals(HUMUS)) {
-                    if (RANDOM.nextInt(100 / PROBABILITY_NEW_TREE_PERCENT) == 0) {
+                else if (PLAYGROUND[i][j].equals(HUMUS)) {
+                    if (RANDOM.nextInt(100) < PROBABILITY_NEW_TREE_PERCENT) {
                         PLAYGROUND[i][j] = TREE;
-                        System.out.println("New Tree");
                     }
                 }
-
-                // Feuer durch Nachbarbaum
-                if (PLAYGROUND[i][j].equals(TREE)) {
-                    if ((i > 0 && j > 0 && PLAYGROUND[i - 1][j - 1].equals(TREE_BURNING))
-                            || (i > 0 && PLAYGROUND[i - 1][j].equals(TREE_BURNING))
-                            || (i > 0 && j < PLAYGROUND[i].length - 2 && PLAYGROUND[i - 1][j + 1].equals(TREE_BURNING))
-                            || (j > 0 && PLAYGROUND[i][j - 1].equals(TREE_BURNING))
-                            || (j < PLAYGROUND[i].length - 2 && PLAYGROUND[i][j + 1].equals(TREE_BURNING))
-                            || (i < PLAYGROUND.length - 2 && j > 0 && PLAYGROUND[i + 1][j - 1].equals(TREE_BURNING))
-                            || (i < PLAYGROUND.length - 2 && PLAYGROUND[i + 1][j].equals(TREE_BURNING))
-                            || (i < PLAYGROUND.length - 2 && j < PLAYGROUND[i].length - 2 && PLAYGROUND[i + 1][j + 1].equals(TREE_BURNING))) {
+                // Feuer durch Nachbarbaum (mit Prüfung der Kopie)
+                else if (playgroundCopy[i][j].equals(TREE)) {
+                    if ((i > 0 && j > 0 && playgroundCopy[i - 1][j - 1].equals(TREE_BURNING))
+                            || (i > 0 && playgroundCopy[i - 1][j].equals(TREE_BURNING))
+                            || (i > 0 && j < playgroundCopy[i].length - 1 && playgroundCopy[i - 1][j + 1].equals(TREE_BURNING))
+                            || (j > 0 && playgroundCopy[i][j - 1].equals(TREE_BURNING))
+                            || (j < playgroundCopy[i].length - 1 && playgroundCopy[i][j + 1].equals(TREE_BURNING))
+                            || (i < playgroundCopy.length - 1 && j > 0 && playgroundCopy[i + 1][j - 1].equals(TREE_BURNING))
+                            || (i < playgroundCopy.length - 1 && playgroundCopy[i + 1][j].equals(TREE_BURNING))
+                            || (i < playgroundCopy.length - 1 && j < playgroundCopy[i].length - 1 && playgroundCopy[i + 1][j + 1].equals(TREE_BURNING))) {
                         PLAYGROUND[i][j] = TREE_BURNING;
-                        System.out.println("Fire from neighbour");
                     }
-                }
-
-                // spontanes Feuer (muss nach Feuer vom Nachbarn stehen)
-                if (PLAYGROUND[i][j].equals(TREE)) {
-                    if (RANDOM.nextInt(100 / PROBABILITY_FIRE_PERCENT) == 0) {
+                    // spontanes Feuer
+                    else if (RANDOM.nextInt(100) < PROBABILITY_FIRE_PERCENT) {
                         PLAYGROUND[i][j] = TREE_BURNING;
-                        System.out.println("Tree burning");
                     }
                 }
             }
