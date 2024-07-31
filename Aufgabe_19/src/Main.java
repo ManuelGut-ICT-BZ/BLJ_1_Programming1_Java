@@ -53,27 +53,11 @@ public class Main {
 
     private static float calculate(int firstElement, int secondElement, char operator) throws Exception {
         return switch (operator) {
-            case '+' -> add(firstElement, secondElement);
-            case '-' -> subtract(firstElement, secondElement);
-            case '*' -> multiply(firstElement, secondElement);
-            case '/' -> divide(firstElement, secondElement);
+            case '+' -> firstElement + secondElement;
+            case '-' -> firstElement - secondElement;
+            case '*' -> firstElement * secondElement;
+            case '/' -> (float) firstElement / secondElement;
             default -> throw new Exception("Nicht erlaubter Operator");
         };
-    }
-
-    public static float add(int firstElement, int secondElement) {
-        return firstElement + secondElement;
-    }
-
-    public static float subtract(int firstElement, int secondElement) {
-        return firstElement - secondElement;
-    }
-
-    public static float multiply(int firstElement, int secondElement) {
-        return firstElement * secondElement;
-    }
-
-    public static float divide(int firstElement, int secondElement) {
-        return (float) firstElement / secondElement;
     }
 }
