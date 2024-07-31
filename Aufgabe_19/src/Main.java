@@ -29,7 +29,7 @@ public class Main {
 
     private static void setUpPartsOfCalculation(String input) {
         char[] chars = input.toCharArray();
-        char[] allowedOperatorArray = {'+', '-', '*', '/'};
+        char[] allowedOperatorArray = {'+', '-', '*', '/', '%'};
         List<Character> allowedOperators = new ArrayList<>();
         for (char element : allowedOperatorArray) {
             allowedOperators.add(element);
@@ -57,6 +57,7 @@ public class Main {
             case '-' -> firstElement - secondElement;
             case '*' -> firstElement * secondElement;
             case '/' -> (float) firstElement / secondElement;
+            case '%' -> firstElement % secondElement;
             default -> throw new Exception("Nicht erlaubter Operator");
         };
     }
