@@ -25,7 +25,7 @@ public class Main {
         printMemory();
 
         while (!isSolved()) {
-            String guessedFields = readUserInput(scanner);
+            int[] guessedFields = readUserInput(scanner);
             checkGuess(guessedFields);
         }
 
@@ -103,7 +103,8 @@ public class Main {
         }
     }
 
-    private static String readUserInput(Scanner scanner) {
+    private static int[] readUserInput(Scanner scanner) {
+        int[] inputNumbers = new int[4];
         String repeatText = " Wiederhole die Eingabe.";
         String input = "1111";
         boolean isValidInteger = false;
@@ -112,9 +113,13 @@ public class Main {
                 input = scanner.nextLine();
                 int inputNumber = Integer.parseInt(input);
                 char[] inputs = input.toCharArray();
+                inputNumbers[0] = Character.getNumericValue(inputs[0]) - 1;
+                inputNumbers[1] = Character.getNumericValue(inputs[1] - 1);
+                inputNumbers[2] = Character.getNumericValue(inputs[2] - 1);
+                inputNumbers[3] = Character.getNumericValue(inputs[3] - 1);
                 if(inputNumber > 4444){
                     System.out.println("Erlaubte Zahlen 1111 - 4444." + repeatText);
-                }else if(inputs[0] == inputs[2] && inputs[1]==inputs[3]){
+                }else if(inputNumbers[0] == inputNumbers[2] && inputNumbers[1]==inputNumbers[3]){
                     System.out.println("Du hast zweimal dasselbe Feld gewählt." + repeatText);
                 }else {
                     isValidInteger = true;
@@ -123,28 +128,23 @@ public class Main {
                 System.out.println("Es sind nur Zahlen erlaubt." + repeatText);
             }
         }
-        return input;
+        return inputNumbers;
     }
 
-    private static void checkGuess(String userInput) {
+    private static void checkGuess(int[] inputNumbers) {
         guessCounter++;
-        char[] inputs = userInput.toCharArray();
-        int indexRowCard1 = Character.getNumericValue(inputs[0]) - 1;
-        int indexColumnCard1 = Character.getNumericValue(inputs[1] - 1);
-        int indexRowCard2 = Character.getNumericValue(inputs[2] - 1);
-        int indexColumnCard2 = Character.getNumericValue(inputs[3] - 1);
-        GAME_STATE[indexRowCard1][indexColumnCard1] = MEMORY[indexRowCard1][indexColumnCard1];
-        GAME_STATE[indexRowCard2][indexColumnCard2] = MEMORY[indexRowCard2][indexColumnCard2];
+        GAME_STATE[inputNumbers[0]][inputNumbers[1]] = MEMORY[inputNumbers[0]][inputNumbers[1]];
+        GAME_STATE[inputNumbers[2]][inputNumbers[3]] = MEMORY[inputNumbers[2]][inputNumbers[3]];
         printGameState();
-        if (GAME_STATE[indexRowCard1][indexColumnCard1].equals(GAME_STATE[indexRowCard2][indexColumnCard2])) {
+        if (GAME_STATE[inputNumbers[0]][inputNumbers[1]].equals(GAME_STATE[inputNumbers[2]][inputNumbers[3]])) {
             System.out.println("Treffer!");
-            GAME_STATE[indexRowCard1][indexColumnCard1] = SOLVED_CARD;
-            GAME_STATE[indexRowCard2][indexColumnCard2] = SOLVED_CARD;
+            GAME_STATE[inputNumbers[0]][inputNumbers[1]] = SOLVED_CARD;
+            GAME_STATE[inputNumbers[2]][inputNumbers[3]] = SOLVED_CARD;
             printGameState();
         } else {
             System.out.println("Leider kein Treffer!");
-            GAME_STATE[indexRowCard1][indexColumnCard1] = FILL_CARD;
-            GAME_STATE[indexRowCard2][indexColumnCard2] = FILL_CARD;
+            GAME_STATE[inputNumbers[0]][inputNumbers[1]] = FILL_CARD;
+            GAME_STATE[inputNumbers[2]][inputNumbers[3]] = FILL_CARD;
             printGameState();
         }
     }
