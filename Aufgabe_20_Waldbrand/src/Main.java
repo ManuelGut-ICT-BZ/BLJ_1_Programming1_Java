@@ -1,4 +1,6 @@
 import java.util.Random;
+import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Thread.sleep;
 
@@ -14,12 +16,22 @@ public class Main {
     private static final int PROBABILITY_FIRE_PER_MILLE = 1;
     private static final int PROBABILITY_NEW_TREE_PER_MILLE = 100;
     private static final Random RANDOM = new Random();
+    private static boolean running = true;
 
     public static void main(String[] args) throws InterruptedException {
+
+        // Sehr fortgeschritten: In einem neuen Thread auf Tastatureingabe zum Beenden der Animation warten
+        Thread inputThread = new Thread(() -> {
+            Scanner scanner = new Scanner(System.in);
+            scanner.nextLine();
+            running = false;
+        });
+        inputThread.start();
+
         setUpPlayground();
         drawPlayground();
 
-        while (true) {
+        while (running) {
             sleep(TIME_INTERVAL_IN_SECONDS * 1000);
             changePlayground();
             drawPlayground();
@@ -45,7 +57,7 @@ public class Main {
             }
             System.out.println();
         }
-        System.out.println();
+        System.out.println("Press enter to quit.");
         System.out.println("-----------------------------------------------------------------------------");
         System.out.println();
     }
