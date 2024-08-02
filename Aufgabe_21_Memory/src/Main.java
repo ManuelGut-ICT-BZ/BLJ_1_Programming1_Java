@@ -21,8 +21,6 @@ public class Main {
         printWelcomeText();
         setUpGame();
         printGameState();
-        //Todo: Remove
-        printMemory();
 
         while (!isSolved()) {
             int[] guessedFields = readUserInput(scanner);
@@ -106,7 +104,7 @@ public class Main {
     private static int[] readUserInput(Scanner scanner) {
         int[] inputNumbers = new int[4];
         String repeatText = " Wiederhole die Eingabe.";
-        String input = "1111";
+        String input;
         boolean isValidInteger = false;
         while (!isValidInteger) {
             try {
@@ -117,11 +115,14 @@ public class Main {
                 inputNumbers[1] = Character.getNumericValue(inputs[1] - 1);
                 inputNumbers[2] = Character.getNumericValue(inputs[2] - 1);
                 inputNumbers[3] = Character.getNumericValue(inputs[3] - 1);
-                if(inputNumber > 4444){
+                if (inputNumber > 4444) {
                     System.out.println("Erlaubte Zahlen 1111 - 4444." + repeatText);
-                }else if(inputNumbers[0] == inputNumbers[2] && inputNumbers[1]==inputNumbers[3]){
+                } else if (inputNumbers[0] == inputNumbers[2] && inputNumbers[1] == inputNumbers[3]) {
                     System.out.println("Du hast zweimal dasselbe Feld gewählt." + repeatText);
-                }else {
+                } else if (GAME_STATE[inputNumbers[0]][inputNumbers[1]].equals(SOLVED_CARD) ||
+                        GAME_STATE[inputNumbers[2]][inputNumbers[3]].equals(SOLVED_CARD)) {
+                    System.out.println("Ein Feld ist bereits aufgedeckt." + repeatText);
+                } else {
                     isValidInteger = true;
                 }
             } catch (NumberFormatException numberFormatException) {
@@ -133,31 +134,33 @@ public class Main {
 
     private static void checkGuess(int[] inputNumbers) {
         guessCounter++;
+        String guessInfoText = " Anzahl Tipps bisher: " + guessCounter;
         GAME_STATE[inputNumbers[0]][inputNumbers[1]] = MEMORY[inputNumbers[0]][inputNumbers[1]];
         GAME_STATE[inputNumbers[2]][inputNumbers[3]] = MEMORY[inputNumbers[2]][inputNumbers[3]];
         printGameState();
         if (GAME_STATE[inputNumbers[0]][inputNumbers[1]].equals(GAME_STATE[inputNumbers[2]][inputNumbers[3]])) {
-            System.out.println("Treffer!");
+            System.out.println("Treffer!" + guessInfoText);
             GAME_STATE[inputNumbers[0]][inputNumbers[1]] = SOLVED_CARD;
             GAME_STATE[inputNumbers[2]][inputNumbers[3]] = SOLVED_CARD;
             printGameState();
         } else {
-            System.out.println("Leider kein Treffer!");
+            System.out.println("Leider kein Treffer!" + guessInfoText);
             GAME_STATE[inputNumbers[0]][inputNumbers[1]] = FILL_CARD;
             GAME_STATE[inputNumbers[2]][inputNumbers[3]] = FILL_CARD;
             printGameState();
         }
     }
 
-    private static boolean isSolved(){
+    private static boolean isSolved() {
         for (int i = 0; i < GAME_STATE.length; i++) {
             for (int j = 0; j < GAME_STATE.length; j++) {
-                if (!GAME_STATE[i][j].equals(SOLVED_CARD)){
-                        return false;
+                if (!GAME_STATE[i][j].equals(SOLVED_CARD)) {
+                    return false;
                 }
             }
         }
         System.out.println("Gratulation! Sie haben " + guessCounter + " Tipps benötigt!");
+        printMemory();
         return true;
     }
 }
